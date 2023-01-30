@@ -11,12 +11,25 @@ import { AuthService } from './auth/auth.service';
 import config from './config/keys';
 import { UsersSchema } from './auth/schemas/User.schema';
 import { PassportModule } from '@nestjs/passport';
+import { UserModule } from './user/user.module';
+import { UserController } from './user/user.controller';
+import { UsersService } from './user/user.service';
+import { UserSchema } from './user/schemas/Users.schema';
+import { JwtModule } from '@nestjs/jwt';
+
 
 @Module({
-  imports: [ItemsModule, AuthModule, MongooseModule.forRoot(config.dbUri), PassportModule.register({session:true})],
+  imports: [UserModule,ItemsModule, AuthModule, MongooseModule.forRoot(config.dbUri), PassportModule.register({session:true}), MongooseModule.forFeature([{name: 'User', schema: UserSchema}]),
+  JwtModule.register({
+    secret: process.env.JWT_SECRET,
+    privateKey:'yyuuyyyyhhhdhhhdd',
+    // signOptions:{
+    //   expiresIn: process.env.EXPIRES
+    // }
+  })],
   // controllers: [AppController, ItemsController],
   // providers: [AppService, ItemsService],
-  controllers: [AppController, AuthController],
-  providers: [AppService],
+  controllers: [AppController, AuthController, UserController],
+  providers: [AppService, UsersService],
 })
 export class AppModule {}
